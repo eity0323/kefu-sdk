@@ -1,0 +1,4 @@
+include ':CEC-Android-SDK'
+include ':kefu-easeui'
+include ':app'
+rootProject.name = "kefu-sdk"
