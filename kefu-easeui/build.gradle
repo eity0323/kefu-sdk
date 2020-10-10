@@ -1,6 +1,7 @@
 apply plugin: 'com.android.library'
 
-
+apply plugin: 'com.github.dcendents.android-maven'
+group='com.github.LambdaXiao'
 android {
     compileSdkVersion 28
     buildToolsVersion "28.0.2"
