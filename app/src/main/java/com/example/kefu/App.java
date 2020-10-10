@@ -12,7 +12,7 @@ public class App extends Application {
 
     private static final String Appkey = "1434201009092679#kefuchannelapp86375";
     private static final String TenantId = "86375";
-    public static final String IMID = "kefuchannelimid_683614";
+    public static final String IMID = "kefuchannelimid_328956";
 
     @Override
     public void onCreate() {
