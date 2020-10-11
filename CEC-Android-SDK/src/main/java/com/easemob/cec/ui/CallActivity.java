@@ -59,6 +59,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 音视频通话
  * author liyuzhao
  * email:liyuzhao@easemob.com
  * date: 04/05/2018
@@ -67,8 +68,8 @@ import java.util.Map;
 public class CallActivity extends DemoBaseActivity implements CallManager.CallManagerDelegate {
 
 	private static final String TAG = "call_activity";
-	private final int MSG_CALL_ANSWER = 2;
-	private final int MSG_CALL_END = 3;
+	private final int MSG_CALL_ANSWER = 2;//接听
+	private final int MSG_CALL_END = 3;//挂断
 	private final int MSG_CALL_RELEASE_HANDLER = 4;
 
 	private final int MAKE_CALL_TIMEOUT = 60 * 1000;// 未接听，1分钟后超时关闭
@@ -76,10 +77,10 @@ public class CallActivity extends DemoBaseActivity implements CallManager.CallMa
 	private Map<String, List<StreamItem>> mStreamItemMaps = new HashMap<>();
 	private Map<String, Integer> mMemberViewIds = new HashMap<>();
 
-	private AudioManager mAudioManager;
-	private Ringtone mRingtone;
-	private HeadsetReceiver mHeadsetReceiver = new HeadsetReceiver();
-	public CallSurfaceView mCurrentSurfaceView;
+	private AudioManager mAudioManager;//音频管理
+	private Ringtone mRingtone;//铃声
+	private HeadsetReceiver mHeadsetReceiver = new HeadsetReceiver(); // 插入和拔出耳机会触发广播
+	public CallSurfaceView mCurrentSurfaceView;//视频流显示区
 	private TextView mTvTitleTips;
 	private RadioLayoutGroup mMembersContainer;
 	private View llAcceptContainer;
@@ -93,7 +94,7 @@ public class CallActivity extends DemoBaseActivity implements CallManager.CallMa
 	private boolean isHideControllerState;
 	private String mSelectedMemberName;
 	private LayoutInflater mInflater;
-	private com.easemob.cec.widget.MyChronometer mChronometer;
+	private com.easemob.cec.widget.MyChronometer mChronometer;//倒计时
 	private CallControllers mCallControllers;
 	private boolean isCalling = false;//是否通话中
 
@@ -131,7 +132,6 @@ public class CallActivity extends DemoBaseActivity implements CallManager.CallMa
 
 	}
 
-
 	private void initViews(){
 		mCurrentSurfaceView = (CallSurfaceView) findViewById(R.id.call_surfaceview);
 		mCurrentSurfaceView.setScaleMode(VideoView.EMCallViewScaleMode.EMCallViewScaleModeAspectFill);
@@ -162,7 +162,6 @@ public class CallActivity extends DemoBaseActivity implements CallManager.CallMa
 		ib_minimize.setVisibility(View.VISIBLE);
 	}
 
-
 	private void initListeners(){
 		//接听
 		mIvAccept.setOnClickListener(new View.OnClickListener() {
@@ -178,11 +177,12 @@ public class CallActivity extends DemoBaseActivity implements CallManager.CallMa
 				mHandler.sendEmptyMessage(MSG_CALL_END);
 			}
 		});
-		//最小化页面
+		//最小化页面开启悬浮窗
 		ib_minimize.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+					//检测是否开启了悬浮窗权限
 					if (!Settings.canDrawOverlays(CallActivity.this)) {
 						showAlertDialog();
 					} else {
@@ -194,6 +194,7 @@ public class CallActivity extends DemoBaseActivity implements CallManager.CallMa
 			}
 		});
 
+		//缩小视屏区
 		mVideoModeFit.setOnClickListener(new View.OnClickListener(){
 
 			@Override
@@ -203,7 +204,7 @@ public class CallActivity extends DemoBaseActivity implements CallManager.CallMa
 				mCurrentSurfaceView.setScaleMode(VideoView.EMCallViewScaleMode.EMCallViewScaleModeAspectFit);
 			}
 		});
-
+		//全屏视屏区
 		mVideoModeFill.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -212,13 +213,14 @@ public class CallActivity extends DemoBaseActivity implements CallManager.CallMa
 				mCurrentSurfaceView.setScaleMode(VideoView.EMCallViewScaleMode.EMCallViewScaleModeAspectFill);
 			}
 		});
-
+		//切换前后摄像头
 		mCallControllers.setSwitchCameraOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				ChatClient.getInstance().callManager().switchCamera();
 			}
 		});
+		//开启或关闭麦克风
 		mCallControllers.setMuteOnCheckedChangeListener(new CallControllers.OnCheckedChangeListener() {
 			@Override
 			public boolean onCheckedChanged(View buttonView, boolean isChecked) {
@@ -230,7 +232,7 @@ public class CallActivity extends DemoBaseActivity implements CallManager.CallMa
 				return true;
 			}
 		});
-
+		//是否开启音频
 		mCallControllers.setSpeakerOnCheckedChangedListener(new CallControllers.OnCheckedChangeListener() {
 			@Override
 			public boolean onCheckedChanged(View buttonView, boolean isChecked) {
@@ -242,7 +244,7 @@ public class CallActivity extends DemoBaseActivity implements CallManager.CallMa
 				return true;
 			}
 		});
-
+		//开启或关闭视频流
 		mCallControllers.setLocalVideoOnCheckedChangeListener(new CallControllers.OnCheckedChangeListener() {
 			@Override
 			public boolean onCheckedChanged(View buttonView, boolean isChecked) {
@@ -254,7 +256,7 @@ public class CallActivity extends DemoBaseActivity implements CallManager.CallMa
 				return true;
 			}
 		});
-
+		//是否开启截屏服务
 		mCallControllers.setSharedWindowOnCheckedChangeListener(new CallControllers.OnCheckedChangeListener() {
 			@Override
 			public boolean onCheckedChanged(View buttonView, boolean isChecked) {
@@ -601,7 +603,7 @@ public class CallActivity extends DemoBaseActivity implements CallManager.CallMa
 		public void handleMessage(Message msg) {
 			EMLog.d(TAG, "handleMessage -- what:" + msg.what);
 			switch (msg.what) {
-				case MSG_CALL_ANSWER:
+				case MSG_CALL_ANSWER://接听处理
 					EMLog.d(TAG, "MSG_CALL_ANSWER");
 					mHandler.removeCallbacks(timeoutHangup);
 					runOnUiThread(new Runnable() {
@@ -646,7 +648,7 @@ public class CallActivity extends DemoBaseActivity implements CallManager.CallMa
 						}
 					});
 					break;
-				case MSG_CALL_END:
+				case MSG_CALL_END://挂断处理
 					runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
@@ -656,16 +658,20 @@ public class CallActivity extends DemoBaseActivity implements CallManager.CallMa
 							mChronometer.stop();
 							ChatClient.getInstance().callManager().endCall();
 							stopForegroundService();
+							//取消悬浮窗
+							FloatWindow.getInstance(CallActivity.this).removeFloatWindow();
 							finish();
 						}
 					});
 					break;
-				case MSG_CALL_RELEASE_HANDLER:
+				case MSG_CALL_RELEASE_HANDLER://挂断通话并清理监听事件
 					runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
 							info("click hangup");
 							isCalling = false;
+							//取消悬浮窗
+							FloatWindow.getInstance(CallActivity.this).removeFloatWindow();
 							ChatClient.getInstance().callManager().endCall();
 							stopForegroundService();
 							mHandler.removeCallbacks(timeoutHangup);
@@ -719,6 +725,12 @@ public class CallActivity extends DemoBaseActivity implements CallManager.CallMa
 		}
 		//取消悬浮窗
 		FloatWindow.getInstance(CallActivity.this).removeFloatWindow();
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				ChatClient.getInstance().callManager().setLocalView(mCurrentSurfaceView);
+			}
+		});
 	}
 
 	@Override

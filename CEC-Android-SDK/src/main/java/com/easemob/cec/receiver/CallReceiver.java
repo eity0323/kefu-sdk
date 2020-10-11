@@ -11,6 +11,10 @@ import com.hyphenate.util.EMLog;
 
 /**
  * Created by liyuzhao on 11/01/2017.
+ *
+ * 监听呼入通话
+ * 实时通话分为视频通话和音频通话，与普通电话不同，它是基于网络的。
+ * 通过注册相应 action 的 BroadcastReceiver 来监听呼叫过来的通话，接到广播后开发者可以调起 APP 里的通话 Activity。
  */
 
 public class CallReceiver extends BroadcastReceiver {

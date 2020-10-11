@@ -7,6 +7,7 @@ import android.os.Bundle;
 import com.easemob.cec.Constant;
 import com.easemob.cec.DemoMessageHelper;
 import com.easemob.cec.R;
+import com.hyphenate.chat.CallOption;
 import com.hyphenate.chat.ChatClient;
 import com.hyphenate.chat.Message;
 import com.hyphenate.helpdesk.easeui.recorder.MediaManager;
@@ -42,6 +43,15 @@ public class ChatActivity extends BaseActivity {
             getSupportFragmentManager().beginTransaction().add(R.id.container, chatFragment, chatFragmentTAG).commit();
             sendOrderOrTrack();
         }
+
+        //只需要语音通话，不需要视频通话
+//        CallOption callOption = new CallOption();
+//        callOption.isVideoOff = true;  //是否不启动摄像头
+//        callOption.isMute = false; //是否静音
+//        callOption.useBackCamera = false; //是否启用后置摄像头
+////        callOption.videoHeight = .. //设置视频高度
+////        callOption.videoWidth = .. // 设置视频宽度
+//        ChatClient.getInstance().callManager().setCallOption(callOption);
     }
 
 
@@ -112,6 +122,7 @@ public class ChatActivity extends BaseActivity {
         super.onDestroy();
         MediaManager.release();
         instance = null;
+        //取消视频邀请
 //        ChatClient.getInstance().chatManager().cancelVideoConferences(toChatUsername, null);
     }
 

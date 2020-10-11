@@ -18,19 +18,26 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
 
-        ChatClient.Options options = new ChatClient.Options();
+        CECHelper.getInstance().init(this,
+                new ChatClient.Options().setAppkey(Appkey)
+                        .setTenantId(TenantId));
+        /*
+        ChatClient.Options()参数设置说明：
         //必填项，appkey获取地址：kefu.easemob.com，“管理员模式 > 渠道管理 > 手机APP”页面的关联的“AppKey”
         options.setAppkey(Appkey);
         //必填项，tenantId获取地址：kefu.easemob.com，“管理员模式 > 设置 > 企业信息”页面的“租户ID”
         options.setTenantId(TenantId);
-        options.showAgentInputState().showVisitorWaitCount().showMessagePredict();
         //设为调试模式，打成正式包时，最好设为false，以免消耗额外的资源
         options.setConsoleLog(true);
-        //options.setKefuRestServer("https://sandbox.kefu.easemob.com");
-//	    options.setUse2channel(true);
-//        options.setAutoLogin(false);
-//        options.setAppVersion("1.2.4");
-
-        CECHelper.getInstance().init(this,options);
+        options.showAgentInputState().showVisitorWaitCount().showMessagePredict();
+        options.setUse2channel(true);
+        options.setAutoLogin(false);
+        options.setAppVersion("1.2.4");
+        //私有部署场景下，需要设置以下IP地址和端口：
+        options.setKefuServerAddress("https://kefu.easemob.com");  //KefuServer
+        options.setRestServer("a1.easemob.com");  //RestServer
+        options.setIMServer("msync-im1.easemob.com"); //ChatServer
+        options.setIMPort(443); //ChatPort
+        */
     }
 }

@@ -74,7 +74,7 @@ public class CECHelper {
      */
     public void init(final Context context, ChatClient.Options options) {
         appContext = context;
-
+        Preferences.init(context);
         // 环信客服 SDK 初始化, 初始化成功后再调用环信下面的内容
         if (ChatClient.getInstance().init(context, options)) {
             _uiProvider = UIProvider.getInstance();
@@ -84,13 +84,12 @@ public class CECHelper {
             setEaseUIProvider(context);
             //设置全局监听
             setGlobalListeners();
-
         }
-        Preferences.init(context);
     }
 
-    //登录环信客服
+    //登录环信客服 采用账号密码登录。
     public void login(final Context context, final String imid, String name, String pwd) {
+        //需要先判断登录状态再进入会话界面，否则会出问题。
         //ChatClient.getInstance().isLoggedInBefore() 可以检测是否已经登录过环信，如果登录过则环信SDK会自动登录，不需要再次调用登录操作
         if (ChatClient.getInstance().isLoggedInBefore()) {
             toChatActivity(context, imid);
@@ -110,7 +109,7 @@ public class CECHelper {
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(context,"login fail,code:" + code + ",error:" + error,Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, "login fail,code:" + code + ",error:" + error, Toast.LENGTH_LONG).show();
                         }
                     });
 
@@ -124,16 +123,53 @@ public class CECHelper {
         }
     }
 
+    //登录环信客服 采用账号token登录。
+    public void loginWithToken(final Context context, final String imid, String name, String token) {
+        //需要先判断登录状态再进入会话界面，否则会出问题。
+        //ChatClient.getInstance().isLoggedInBefore() 可以检测是否已经登录过环信，如果登录过则环信SDK会自动登录，不需要再次调用登录操作
+        if (ChatClient.getInstance().isLoggedInBefore()) {
+            toChatActivity(context, imid);
+        } else {
+            //随机创建一个用户并登录环信服务器
+            // login huanxin server
+            ChatClient.getInstance().loginWithToken(name, token, new Callback() {
+                @Override
+                public void onSuccess() {
+                    android.util.Log.d(TAG, "login success!");
+                    toChatActivity(context, imid);
+                }
+
+                @Override
+                public void onError(final int code, final String error) {
+                    android.util.Log.e(TAG, "login fail,code:" + code + ",error:" + error);
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(context, "login fail,code:" + code + ",error:" + error, Toast.LENGTH_LONG).show();
+                        }
+                    });
+
+                }
+
+                @Override
+                public void onProgress(int progress, String status) {
+
+                }
+            });
+        }
+    }
+
+    // 进入聊天室页面
     private void toChatActivity(Context context, String IMID) {
-        // 进入主页面
+
         Intent intent = new IntentBuilder(context)
                 .setTargetClass(ChatActivity.class)
-                .setVisitorInfo(DemoMessageHelper.createVisitorInfo())
-                .setServiceIMNumber(IMID)
+                .setServiceIMNumber(IMID)//“IM服务号”需要与初始化时设置的appkey对应,获取地址：kefu.easemob.com，“管理员模式 > 渠道管理 > 手机APP”页面的关联的“IM服务号”
+                .setShowUserNick(true)
+//                .setVisitorInfo(DemoMessageHelper.createVisitorInfo())
 //                .setScheduleQueue(DemoMessageHelper.createQueueIdentity(queueName))
 //                .setTitleName(titleName)
-//						.setScheduleAgent(DemoMessageHelper.createAgentIdentity("ceshiok1@qq.com"))
-                .setShowUserNick(true)
+//				  .setScheduleAgent(DemoMessageHelper.createAgentIdentity("ceshiok1@qq.com"))
 //                .setBundle(bundle)
                 .build();
         context.startActivity(intent);
@@ -311,7 +347,7 @@ public class CECHelper {
 
         //注册消息事件监听
         registerEventListener();
-
+        //音视频广播接收器
         IntentFilter callFilter = new IntentFilter(ChatClient.getInstance().callManager().getIncomingCallBroadcastAction());
         if (callReceiver == null) {
             callReceiver = new CallReceiver();
@@ -321,7 +357,7 @@ public class CECHelper {
     }
 
     /**
-     * 全局事件监听
+     * 全局消息事件监听
      * 因为可能会有UI页面先处理到这个消息，所以一般如果UI页面已经处理，这里就不需要再次处理
      * activityList.size() <= 0 意味着所有页面都已经在后台运行，或者已经离开Activity Stack
      */

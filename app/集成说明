@@ -17,25 +17,28 @@ compileOptions {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-  以及在dependencies添加库依赖：implementation 'com.github.LambdaXiao:kefu-sdk:1.1.0'
+3，在dependencies添加库依赖：implementation 'com.github.LambdaXiao:kefu-sdk:1.1.0'
 
 二，初始化SDK
 在Application的onCreate方法中初始化SDk如下:
 
-ChatClient.Options options = new ChatClient.Options();
+CECHelper.getInstance().init(this,
+                new ChatClient.Options().setAppkey(Appkey)
+                        .setTenantId(TenantId));
+        /*
+        ChatClient.Options()参数设置说明：
         //必填项，appkey获取地址：kefu.easemob.com，“管理员模式 > 渠道管理 > 手机APP”页面的关联的“AppKey”
         options.setAppkey(Appkey);
         //必填项，tenantId获取地址：kefu.easemob.com，“管理员模式 > 设置 > 企业信息”页面的“租户ID”
         options.setTenantId(TenantId);
-        options.showAgentInputState().showVisitorWaitCount().showMessagePredict();
         //设为调试模式，打成正式包时，最好设为false，以免消耗额外的资源
         options.setConsoleLog(true);
-        //options.setKefuRestServer("https://sandbox.kefu.easemob.com");
-        //options.setUse2channel(true);
-        //options.setAutoLogin(false);
-        //options.setAppVersion("1.2.4");
-        //初始化SDK
-        CECHelper.getInstance().init(this,options);
+        options.showAgentInputState().showVisitorWaitCount().showMessagePredict();
+        options.setKefuRestServer("https://sandbox.kefu.easemob.com");
+        options.setUse2channel(true);
+        options.setAutoLogin(false);
+        options.setAppVersion("1.2.4");
+        */
 
 三，调起客服
 在需要的地方按如下方法登录并调到客服聊天页面

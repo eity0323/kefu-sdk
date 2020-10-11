@@ -1,5 +1,6 @@
 package com.easemob.cec.ui;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,6 +27,8 @@ import com.hyphenate.chat.EMVoiceMessageBody;
 import com.hyphenate.chat.Message;
 import com.hyphenate.helpdesk.easeui.provider.CustomChatRowProvider;
 import com.hyphenate.helpdesk.easeui.recorder.MediaManager;
+import com.hyphenate.helpdesk.easeui.runtimepermission.PermissionsManager;
+import com.hyphenate.helpdesk.easeui.runtimepermission.PermissionsResultAction;
 import com.hyphenate.helpdesk.easeui.ui.ChatFragment;
 import com.hyphenate.helpdesk.easeui.util.CommonUtils;
 import com.hyphenate.helpdesk.easeui.widget.AlertDialogFragment;
@@ -190,17 +193,27 @@ public class CustomChatFragment extends ChatFragment implements ChatFragment.Eas
     public boolean onExtendMenuItemClick(int itemId, View view) {
         switch (itemId) {
             case ITEM_MAP: //地图
-                startActivityForResult(new Intent(getActivity(), BaiduMapActivity.class), REQUEST_CODE_SELECT_MAP);
+                PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, new PermissionsResultAction() {
+                    @Override
+                    public void onGranted() {
+                        startActivityForResult(new Intent(getActivity(), BaiduMapActivity.class), REQUEST_CODE_SELECT_MAP);
+                    }
+
+                    @Override
+                    public void onDenied(String permission) {
+
+                    }
+                });
+
                 break;
 	        case ITEM_LEAVE_MSG://留言
                 Intent intent = new Intent(getActivity(), NewLeaveMessageActivity.class);
                 startActivity(intent);
-                getActivity().finish();
                 break;
-            case ITEM_VIDEO:
+            case ITEM_VIDEO://音视频
                 startVideoCall();
                 break;
-            case ITEM_EVALUATION:
+            case ITEM_EVALUATION://评价
                 ChatClient.getInstance().chatManager().asyncSendInviteEvaluationMessage(toChatUsername, null);
                 break;
 //            case ITEM_FILE:
