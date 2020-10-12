@@ -10,9 +10,14 @@ import com.hyphenate.chat.ChatClient;
  */
 public class App extends Application {
 
+    //appkey 获取地址：kefu.easemob.com，“管理员模式 > 渠道管理 > 手机APP”页面的关联的“AppKey”
     private static final String Appkey = "1434201009092679#kefuchannelapp86375";
+    //租户ID 获取地址：kefu.easemob.com，“管理员模式 > 设置 > 企业信息”页面的“租户ID”
     private static final String TenantId = "86375";
+    //IM服务号 获取地址：kefu.easemob.com，“管理员模式 > 渠道管理 > 手机APP”页面的关联的“IM服务号”
     public static final String IMID = "kefuchannelimid_328956";
+    //留言ID  进入“管理员模式 → 留言”，可以看到这个Project ID
+    public static final String ProjectId = "4098193";
 
     @Override
     public void onCreate() {

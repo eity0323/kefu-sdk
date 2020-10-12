@@ -1,10 +1,7 @@
 apply plugin: 'com.android.library'
 
-//apply plugin: 'com.novoda.bintray-release'
 apply plugin: 'com.github.dcendents.android-maven'
 group='com.github.LambdaXiao'
-// group='com.github.你的github用户名'
-// version='版本号'
 
 android {
     compileSdkVersion 29
@@ -54,15 +51,6 @@ dependencies {
 
     api 'com.github.jaouan:compoundlayout:1.0.1'
     api project(':kefu-easeui')
-    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.google.code.gson:gson:2.8.6'
 
 }
-
-//publish {
-//    userOrg = 'x1971481259'                                         //bintray.com 账号用户名
-//    groupId = 'com.easemob'                                        //唯一 id，最后依赖的库名组成部分之一
-//    artifactId = 'cec-sdk'                                    //仓库名
-//    publishVersion = '1.1.0'                                    //版本号
-//    desc = 'for android kefu sdk'            //描述
-//    website = 'https://github.com/LambdaXiao/kefu-android-demo'   //开源项目网址
-//}

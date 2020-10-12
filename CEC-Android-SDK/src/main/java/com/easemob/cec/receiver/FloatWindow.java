@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.PixelFormat;
 import android.os.Build;
+import android.os.Handler;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -12,11 +13,13 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.easemob.cec.R;
 import com.easemob.cec.ui.CallActivity;
 import com.hyphenate.chat.CallSurfaceView;
 import com.hyphenate.chat.ChatClient;
+import com.hyphenate.helpdesk.easeui.widget.ToastHelper;
 import com.hyphenate.media.EMCallSurfaceView;
 
 /**
@@ -117,6 +120,17 @@ public class FloatWindow {
 //                }
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
+
+                //解决小米手机默认关闭了“后台弹出界面的权限”，主动提示去开启后台弹出界面的权限
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(!CallActivity.isFront ){
+                            Toast.makeText(context,"未开启“后台弹出界面”权限，请到应用权限管理中去开启",Toast.LENGTH_LONG).show();
+                        }
+                    }
+                },500);
+
             }
         });
 

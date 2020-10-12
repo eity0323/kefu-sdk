@@ -97,6 +97,7 @@ public class CallActivity extends DemoBaseActivity implements CallManager.CallMa
 	private com.easemob.cec.widget.MyChronometer mChronometer;//倒计时
 	private CallControllers mCallControllers;
 	private boolean isCalling = false;//是否通话中
+	public static boolean isFront = false;//是否在前台
 
 
 	@Override
@@ -714,6 +715,18 @@ public class CallActivity extends DemoBaseActivity implements CallManager.CallMa
 			Intent service = new Intent(this, SRForegroundService.class);
 			stopService(service);
 		}
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		isFront = true;
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		isFront = false;
 	}
 
 	@Override

@@ -205,7 +205,6 @@ public class NewLeaveMessageActivity extends BaseActivity implements View.OnClic
         ticketBody.setCreator(creatorBean);
 
         String target = Preferences.getInstance().getCustomerAccount();
-        String tenantId = Preferences.getInstance().getTenantId();
         String projectId = Preferences.getInstance().getProjectId();
         Gson gson = new Gson();
         ChatClient.getInstance().leaveMsgManager().createLeaveMsg(gson.toJson(ticketBody).toString(), projectId, target, new ValueCallBack<String>() {

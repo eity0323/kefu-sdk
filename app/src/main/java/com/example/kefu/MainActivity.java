@@ -13,6 +13,7 @@ import com.hyphenate.chat.ChatClient;
 import com.hyphenate.helpdesk.callback.Callback;
 
 import static com.example.kefu.App.IMID;
+import static com.example.kefu.App.ProjectId;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
             1，开放注册是为了测试使用，正式环境中不推荐使用该方式注册环信账号；
             2，授权注册的流程应该是您服务器通过环信提供的 REST API 注册，之后保存到您的服务器或返回给客户端。
             建议使用授权模式，即在服务端注册，而不要放到APP中，可以在登录自己APP时从返回的结果中获取环信账号再登录环信服务器。
-       这里为了测试方便在APP内注册客服用户名和密码，正式环境一般在服务器端注册好后返回给客户端*/
+       这里为了演示测试方便在APP内注册客服用户名和密码，正式环境一般在服务器端注册好后返回给客户端*/
         findViewById(R.id.btn1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -54,11 +55,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //调起客服
         findViewById(R.id.btn2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //登录并进入到客服聊天页面
-                CECHelper.getInstance().login(MainActivity.this, IMID, name.getText().toString().trim(), pwd.getText().toString().trim());
+                //使用后台已经注册好的环信账号和密码登录环信客服并进入到客服聊天页面
+                CECHelper.getInstance().login(MainActivity.this, IMID, ProjectId, name.getText().toString().trim(), pwd.getText().toString().trim());
             }
         });
 

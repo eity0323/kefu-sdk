@@ -87,8 +87,18 @@ public class CECHelper {
         }
     }
 
-    //登录环信客服 采用账号密码登录。
-    public void login(final Context context, final String imid, String name, String pwd) {
+    /**
+     * 登录环信客服 采用账号密码登录。
+     *
+     * @param context
+     * @param imid      接入环信移动客服系统使用的关联的IM服务号,获取地址：kefu.easemob.com，“管理员模式 > 渠道管理 > 手机APP”页面的关联的“IM服务号”
+     * @param ProjectId 留言ProjectId  进入“管理员模式 → 留言”，可以看到这个Project ID
+     * @param name      环信账号
+     * @param pwd       环信账号密码
+     */
+    public void login(final Context context, final String imid, String ProjectId, String name, String pwd) {
+        Preferences.getInstance().setCustomerAccount(imid);
+        Preferences.getInstance().setSettingProjectId(ProjectId);
         //需要先判断登录状态再进入会话界面，否则会出问题。
         //ChatClient.getInstance().isLoggedInBefore() 可以检测是否已经登录过环信，如果登录过则环信SDK会自动登录，不需要再次调用登录操作
         if (ChatClient.getInstance().isLoggedInBefore()) {
@@ -123,8 +133,18 @@ public class CECHelper {
         }
     }
 
-    //登录环信客服 采用账号token登录。
-    public void loginWithToken(final Context context, final String imid, String name, String token) {
+    /**
+     * 登录环信客服 采用账号token登录。
+     *
+     * @param context
+     * @param imid      接入环信移动客服系统使用的关联的IM服务号,获取地址：kefu.easemob.com，“管理员模式 > 渠道管理 > 手机APP”页面的关联的“IM服务号”
+     * @param ProjectId 留言ProjectId  进入“管理员模式 → 留言”，可以看到这个Project ID
+     * @param name      环信账号
+     * @param token     登录使用的 token
+     */
+    public void loginWithToken(final Context context, final String imid, String ProjectId, String name, String token) {
+        Preferences.getInstance().setCustomerAccount(imid);
+        Preferences.getInstance().setSettingProjectId(ProjectId);
         //需要先判断登录状态再进入会话界面，否则会出问题。
         //ChatClient.getInstance().isLoggedInBefore() 可以检测是否已经登录过环信，如果登录过则环信SDK会自动登录，不需要再次调用登录操作
         if (ChatClient.getInstance().isLoggedInBefore()) {
@@ -160,11 +180,11 @@ public class CECHelper {
     }
 
     // 进入聊天室页面
-    private void toChatActivity(Context context, String IMID) {
+    private void toChatActivity(Context context, String imid) {
 
         Intent intent = new IntentBuilder(context)
                 .setTargetClass(ChatActivity.class)
-                .setServiceIMNumber(IMID)//“IM服务号”需要与初始化时设置的appkey对应,获取地址：kefu.easemob.com，“管理员模式 > 渠道管理 > 手机APP”页面的关联的“IM服务号”
+                .setServiceIMNumber(imid)//“IM服务号”需要与初始化时设置的appkey对应
                 .setShowUserNick(true)
 //                .setVisitorInfo(DemoMessageHelper.createVisitorInfo())
 //                .setScheduleQueue(DemoMessageHelper.createQueueIdentity(queueName))
@@ -223,59 +243,59 @@ public class CECHelper {
 
 
         //设置通知栏样式
-        _uiProvider.getNotifier().setNotificationInfoProvider(new Notifier.NotificationInfoProvider() {
-            @Override
-            public String getTitle(Message message) {
-                //修改标题,这里使用默认
-                return null;
-            }
-
-            @Override
-            public int getSmallIcon(Message message) {
-                //设置小图标，这里为默认
-                return 0;
-            }
-
-            @Override
-            public String getDisplayedText(Message message) {
-                // 设置状态栏的消息提示，可以根据message的类型做相应提示
-                String ticker = CommonUtils.getMessageDigest(message, context);
-                if (message.getType() == Message.Type.TXT) {
-                    ticker = ticker.replaceAll("\\[.{2,3}\\]", context.getString(R.string.noti_text_expression));
-                }
-                return message.from() + ": " + ticker;
-            }
-
-            @Override
-            public String getLatestText(Message message, int fromUsersNum, int messageNum) {
-                return null;
-                // return fromUsersNum + "contacts send " + messageNum + "messages to you";
-            }
-
-            @Override
-            public Intent getLaunchIntent(Message message) {
-                Intent intent;
-                if (isVideoCalling) {
-                    intent = new Intent(context, CallActivity.class);
-                } else {
-                    //设置点击通知栏跳转事件
-                    Conversation conversation = ChatClient.getInstance().chatManager().getConversation(message.from());
-                    String titleName = null;
-                    if (conversation.officialAccount() != null) {
-                        titleName = conversation.officialAccount().getName();
-                    }
-                    intent = new IntentBuilder(context)
-                            .setTargetClass(ChatActivity.class)
-                            .setServiceIMNumber(conversation.conversationId())
-                            .setVisitorInfo(DemoMessageHelper.createVisitorInfo())
-                            .setTitleName(titleName)
-                            .setShowUserNick(true)
-                            .build();
-
-                }
-                return intent;
-            }
-        });
+//        _uiProvider.getNotifier().setNotificationInfoProvider(new Notifier.NotificationInfoProvider() {
+//            @Override
+//            public String getTitle(Message message) {
+//                //修改标题,这里使用默认
+//                return null;
+//            }
+//
+//            @Override
+//            public int getSmallIcon(Message message) {
+//                //设置小图标，这里为默认
+//                return 0;
+//            }
+//
+//            @Override
+//            public String getDisplayedText(Message message) {
+//                // 设置状态栏的消息提示，可以根据message的类型做相应提示
+//                String ticker = CommonUtils.getMessageDigest(message, context);
+//                if (message.getType() == Message.Type.TXT) {
+//                    ticker = ticker.replaceAll("\\[.{2,3}\\]", context.getString(R.string.noti_text_expression));
+//                }
+//                return message.from() + ": " + ticker;
+//            }
+//
+//            @Override
+//            public String getLatestText(Message message, int fromUsersNum, int messageNum) {
+//                return null;
+//                // return fromUsersNum + "contacts send " + messageNum + "messages to you";
+//            }
+//
+//            @Override
+//            public Intent getLaunchIntent(Message message) {
+//                Intent intent;
+//                if (isVideoCalling) {
+//                    intent = new Intent(context, CallActivity.class);
+//                } else {
+//                    //设置点击通知栏跳转事件
+//                    Conversation conversation = ChatClient.getInstance().chatManager().getConversation(message.from());
+//                    String titleName = null;
+//                    if (conversation.officialAccount() != null) {
+//                        titleName = conversation.officialAccount().getName();
+//                    }
+//                    intent = new IntentBuilder(context)
+//                            .setTargetClass(ChatActivity.class)
+//                            .setServiceIMNumber(conversation.conversationId())
+//                            .setVisitorInfo(DemoMessageHelper.createVisitorInfo())
+//                            .setTitleName(titleName)
+//                            .setShowUserNick(true)
+//                            .build();
+//
+//                }
+//                return intent;
+//            }
+//        });
 
         //不设置,则使用默认, 声音和震动设置
 //        _uiProvider.setSettingsProvider(new UIProvider.SettingsProvider() {
@@ -347,7 +367,7 @@ public class CECHelper {
 
         //注册消息事件监听
         registerEventListener();
-        //音视频广播接收器
+        //全局的音视频广播接收器
         IntentFilter callFilter = new IntentFilter(ChatClient.getInstance().callManager().getIncomingCallBroadcastAction());
         if (callReceiver == null) {
             callReceiver = new CallReceiver();
@@ -368,7 +388,6 @@ public class CECHelper {
             public void onMessage(List<Message> msgs) {
                 for (Message message : msgs) {
                     Log.d(TAG, "onMessageReceived id : " + message.messageId());
-//
                     //这里全局监听通知类消息,通知类消息是通过普通消息的扩展实现
                     if (MessageHelper.isNotificationMessage(message)) {
                         // 检测是否为留言的通知消息
